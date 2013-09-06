@@ -4,6 +4,7 @@ import play.api._
 import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
+import play.api.db.slick.Config._
 import play.api.db.slick._
 import play.api.Play.current
 
@@ -46,7 +47,7 @@ object Application extends Controller {
    * @param orderBy Column to be sorted
    * @param filter Filter applied on computer names
    */
-  def list(page: Int, orderBy: Int, filter: String) = DBAction { implicit rs =>
+  def list(page: Int, orderBy: Int, filter: String) = DBAction{ implicit rs =>
     Ok(html.list(
       Computers.list(page = page, orderBy = orderBy, filter = ("%"+filter+"%")),
       orderBy, filter
@@ -58,7 +59,7 @@ object Application extends Controller {
    *
    * @param id Id of the computer to edit
    */
-  def edit(id: Long) = DBAction { implicit rs =>
+  def edit(id: Long) = DBAction { implicit rs => 
     Computers.findById(id).map { computer =>
       Ok(html.editForm(id, computerForm.fill(computer), Companies.options))
     }.getOrElse(NotFound)

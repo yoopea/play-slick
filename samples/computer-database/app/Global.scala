@@ -1,6 +1,7 @@
 import java.text.SimpleDateFormat
 import play.api._
 import models._
+import play.api.db.slick.Config._
 import play.api.db.slick._
 import play.api.Play.current
 
