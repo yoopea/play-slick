@@ -1,7 +1,7 @@
 import java.text.SimpleDateFormat
 import play.api._
 import models._
-import play.api.db.slick._
+import play.api.db.slick.Config.driver._
 import play.api.Play.current
 
 object Global extends GlobalSettings {

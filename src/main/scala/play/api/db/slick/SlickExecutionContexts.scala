@@ -2,11 +2,15 @@ package play.api.db.slick
 
 import play.api.libs.concurrent.Akka
 import akka.actor.ActorSystem
+import play.api.Application
 
 object SlickExecutionContexts {
 
-  lazy val executionContext = {
-    val app = play.api.Play.current
+  /* Used to control the parallelism of the database connection 
+   * 
+   * Will be removed whenever Slick becomes async
+   * */
+  def executionContext(app: Application) = {
     val configSection = "play.akka.actor.slick-context"
     app.configuration.getConfig(configSection) match {
       case Some(_) => Akka.system(app).dispatchers.lookup(configSection)

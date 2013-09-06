@@ -1,34 +1,28 @@
 package play.api.db.slick
 
-import play.api.Application
 import scala.concurrent.Future
-import play.api.mvc.{ Action, SimpleResult }
+import scala.slick.session.PlayDatabase
 
-object DBAction {
-  import SlickExecutionContexts.executionContext
+import play.api.Application
+import play.api.mvc._
+import play.api.mvc.Action
+import play.api.mvc.ActionBuilder
+import play.api.mvc.AnyContent
+import play.api.mvc.Request
+import play.api.mvc.Results
+import play.api.mvc.SimpleResult
+import play.api.mvc.WrappedRequest
 
-  def apply(resultFunction: => SimpleResult) = {
-    Action.async {
-      Future(resultFunction)(executionContext)
+object DBAction extends WithDB(Config.defaultDatabase(play.api.Play.current)) { //<-- Play.current
+  override def invokeBlock[A](request: Request[A], block: DBSessionRequest[A] => Future[SimpleResult]): Future[SimpleResult] = {
+    slickDatabase.withSession { session =>
+      block(DBSessionRequest(session, request))
     }
   }
-
-  def apply(requestHandler: DBSessionRequest => SimpleResult)(implicit app: Application) = {
-    applyForDB(DB)(requestHandler)
-  }
-
-  def apply(dbName: String)(requestHandler: DBSessionRequest => SimpleResult)(implicit app: Application) = {
-    applyForDB(DB(dbName))(requestHandler)
-  }
-
-  private def applyForDB(db: Database)(requestHandler: DBSessionRequest => SimpleResult)(implicit app: Application) = {
-    Action.async { implicit request =>
-      Future {
-        db.withSession { session: Session =>
-          requestHandler(DBSessionRequest(session, request))
-        }
-      }(executionContext)
-    }
-  }
-
+  
+  def using(database: PlayDatabase) = new WithDB(database)
+  
+  def using(sourceProvider: DBSourceProvider) = new WithDB(Database(sourceProvider))
+  
+  def forName(name: String, app: Application = play.api.Play.current) = new WithDB(Config.database(name)(app))
 }
