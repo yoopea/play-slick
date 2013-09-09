@@ -2,6 +2,7 @@ package play.api.db.slick
 
 import play.api.Application
 import scala.concurrent.ExecutionContext
+import play.api.mvc.Action
 
 object DBAction extends WithDB(Config.defaultDatabase(play.api.Play.current))(SlickExecutionContexts.executionContext(play.api.Play.current)) { //<-- Play.current
   def using(database: Database)(implicit executionContext: ExecutionContext) = new WithDB(database)
