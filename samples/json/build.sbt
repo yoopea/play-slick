@@ -11,6 +11,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "1.0.0"
 )
 
+libraryDependencies += "com.h2database" % "h2" % "1.4.187"
+
 fork in Test := false
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)

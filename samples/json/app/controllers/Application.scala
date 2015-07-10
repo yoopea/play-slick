@@ -13,7 +13,7 @@ import play.api.mvc.Controller
 import slick.driver.JdbcProfile
 import tables.CatTable
 
-class Application extends Controller with CatTable with HasDatabaseConfig[JdbcProfile] {
+object Application extends Controller with CatTable with HasDatabaseConfig[JdbcProfile] {
   val dbConfig = DatabaseConfigProvider.get[JdbcProfile](Play.current)
 
   import driver.api._
